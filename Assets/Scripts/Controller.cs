@@ -99,6 +99,7 @@ public class Controller : MonoBehaviour
         {
             tile.Reset();
         }
+        robSelectable.Clear();
     }
 
     public void ClickOnCop(int cop_id)
@@ -172,16 +173,25 @@ public class Controller : MonoBehaviour
         clickedTile = robber.GetComponent<RobberMove>().currentTile;
         tiles[clickedTile].current = true;
         FindSelectableTiles(false);
+        // Generate a list of available tiles for the robber
+        List<Tile> availableTiles = new List<Tile>();
+        foreach (Tile tile in robSelectable)
+        {
+            if (tiles[clickedTile] != tile)
+            {
+                availableTiles.Add(tile);
+            }
+        }
 
-        /*TODO: Cambia el código de abajo para hacer lo siguiente
-        - Elegimos una casilla aleatoria entre las seleccionables que puede ir el caco
-        - Movemos al caco a esa casilla
-        - Actualizamos la variable currentTile del caco a la nueva casilla
-        */
-        robber.GetComponent<RobberMove>().MoveToTile(tiles[robber.GetComponent<RobberMove>().currentTile]);
+        // Choose a random tile from the available tiles
+        int randomIndex = Random.Range(0, availableTiles.Count);
+        Tile newTile = availableTiles[randomIndex];
+
+        robber.GetComponent<RobberMove>().MoveToTile(newTile);
+        robber.GetComponent<RobberMove>().currentTile = newTile.numTile;
     }
 
-    public void EndGame(bool end)
+        public void EndGame(bool end)
     {
         if (end)
             finalMessage.text = "You Win!";
